@@ -388,7 +388,7 @@ Struktur repository:
 ```text
 .
 ├── README.md
-├── project.pkt
+├── Cisco_ASA_Enterprise_Network.pkt
 └── screenshots/
     ├── topology.png
     ├── asa-config.png
