@@ -57,7 +57,7 @@ Topologi terdiri dari Cisco ASA 5505, satu router ISP, dua switch Cisco Catalyst
 - ASA ↔ Router ISP.
 - Router ISP ↔ Server.
 
-Screenshot topologi dapat disimpan pada `screenshots/topology.png`.
+![Topologi jaringan Cisco ASA](topology.png)
 
 ## Skema Alamat IP
 
@@ -150,12 +150,7 @@ Port yang digunakan:
 - Fa0/2 — terhubung ke PC Finance dan berada pada VLAN 2.
 - Fa0/3 — terhubung ke Switch0 Fa0/3 dan berada pada VLAN 1.
 
-VLAN 2 dapat diberi nama `OUTSIDE` agar dokumentasi lebih mudah dibaca.
-
-```text
-vlan 2
- name OUTSIDE
-```
+Link antarswitch pada konfigurasi ini berada pada VLAN 1 dan tidak diklaim sebagai trunk.
 
 Contoh konfigurasi port access VLAN 2 pada Switch1:
 
@@ -168,8 +163,6 @@ interface fa0/2
  switchport mode access
  switchport access vlan 2
 ```
-
-Link antarswitch pada konfigurasi ini berada pada VLAN 1 dan tidak diklaim sebagai trunk. Jika komunikasi beberapa VLAN melalui link antarswitch diperlukan, konfigurasi VLAN dan trunk harus ditinjau kembali.
 
 ## Konfigurasi ISP dan Routing
 
@@ -212,6 +205,7 @@ Kebijakan keamanan dalam simulasi ini berfokus pada pengaturan trafik ICMP mengg
 
 | Sumber | Tujuan | Kebijakan | Hasil Pengujian |
 |---|---|---|---|
+| PC IT | Server | Izinkan konektivitas | Berhasil |
 | PC Finance | Router ISP | Izinkan ICMP | Berhasil |
 | PC Finance | Server | Izinkan ICMP | Berhasil |
 | PC Finance | PC IT | Tolak ICMP | Diblokir |
@@ -286,9 +280,23 @@ ICMP inspection dan ACL memiliki fungsi berbeda: ACL menentukan trafik yang diiz
 
 ## Pengujian Konektivitas
 
-Pengujian dilakukan menggunakan perintah `ping` pada PC Finance dan router ISP.
+Pengujian dilakukan menggunakan perintah `ping` pada PC IT, PC Finance, dan router ISP.
 
-### Finance ke ISP
+### PC IT ke Server
+
+Perintah:
+
+```text
+ping 192.168.30.10
+```
+
+Hasil pengujian menunjukkan bahwa PC IT berhasil menerima balasan dari server.
+
+**Status: Berhasil.**
+
+PC IT dapat menjangkau server melalui Cisco ASA dan router ISP.
+
+### PC Finance ke ISP
 
 Perintah:
 
@@ -306,7 +314,7 @@ Packets: Sent = 4, Received = 4, Lost = 0 (0% loss)
 
 PC Finance dapat melakukan ping ke router ISP setelah aturan ACL yang sesuai ditambahkan.
 
-### Finance ke Server
+### PC Finance ke Server
 
 Perintah:
 
@@ -324,7 +332,7 @@ Packets: Sent = 4, Received = 4, Lost = 0 (0% loss)
 
 PC Finance dapat menjangkau server melalui ASA dan router ISP.
 
-### Finance ke PC IT
+### PC Finance ke PC IT
 
 Perintah:
 
@@ -340,7 +348,7 @@ Packets: Sent = 4, Received = 0, Lost = 4 (100% loss)
 
 **Status: Diblokir sesuai target pengujian ICMP.**
 
-Setelah pengujian, aturan deny ICMP untuk sumber `192.168.20.10` dan tujuan `192.168.10.10` menunjukkan `hitcnt=4`.
+Setelah pengujian, aturan deny ICMP untuk sumber `192.168.20.10` dan tujuan `192.168.10.10` menunjukkan hit counter yang bertambah. Hal ini mendukung verifikasi bahwa trafik cocok dengan aturan deny.
 
 ### ISP ke Server
 
@@ -382,13 +390,12 @@ Router ISP dapat menjangkau interface outside ASA.
 
 | Sumber | Tujuan | Hasil |
 |---|---|---|
+| PC IT | `192.168.30.10` — Server | Berhasil |
 | PC Finance | `192.168.20.2` — ISP | Berhasil, 4/4 |
 | PC Finance | `192.168.30.10` — Server | Berhasil, 4/4 |
 | PC Finance | `192.168.10.10` — PC IT | Diblokir, 0/4 diterima |
 | Router ISP | `192.168.30.10` — Server | Berhasil, 5/5 |
 | Router ISP | `192.168.20.1` — ASA Outside | Berhasil, 5/5 |
-
-Hasil di atas mendokumentasikan pengujian yang telah dilakukan. Hasil pengujian lainnya sebaiknya dicatat setelah dijalankan ulang dan diverifikasi.
 
 ## Verifikasi Konfigurasi
 
@@ -426,6 +433,8 @@ Digunakan untuk melihat aturan ACL beserta hit counter. Hit counter membantu mem
 
 ### Verifikasi Switch
 
+Perintah yang dapat digunakan, sesuai dukungan perangkat dan versi Packet Tracer:
+
 ```text
 show vlan brief
 show interfaces status
@@ -434,24 +443,18 @@ show cdp neighbors
 show spanning-tree
 ```
 
-Perintah tersebut dapat digunakan untuk memeriksa VLAN, status port, MAC address, tetangga perangkat, dan status spanning tree.
-
-Ketersediaan perintah tertentu dapat berbeda sesuai perangkat dan versi simulasi Packet Tracer.
+Perintah tersebut dapat digunakan untuk memeriksa VLAN, status port, MAC address, tetangga perangkat, dan status spanning tree. Ketersediaan perintah tertentu dapat berbeda sesuai perangkat dan versi simulasi Packet Tracer.
 
 ## Dokumentasi Pengujian
 
-Screenshot yang disarankan untuk dokumentasi project:
+Screenshot yang disertakan dalam repository:
 
-1. Topologi lengkap Cisco Packet Tracer.
-2. Konfigurasi interface ASA.
-3. Output `show route` pada ASA.
-4. Output `show access-list` beserta hit counter.
-5. Hasil ping PC Finance ke server.
-6. Hasil ping PC Finance ke PC IT.
-7. Hasil ping router ISP ke server.
-8. Verifikasi VLAN dan status port switch.
-
-Gunakan screenshot dari pengujian aktual agar dokumentasi sesuai dengan kondisi simulasi.
+1. `topology.png` — topologi lengkap Cisco Packet Tracer.
+2. `asa-interface-verification.png` — verifikasi interface ASA.
+3. `routing-verification.png` — verifikasi routing ASA.
+4. `acl-verification.png` — ACL dan hit counter.
+5. `connectivity-testing-PC FINANCE.png` — pengujian konektivitas PC Finance.
+6. `connectivity-testing-PC IT.png` — pengujian konektivitas PC IT.
 
 ## Troubleshooting
 
@@ -481,7 +484,7 @@ Gunakan screenshot dari pengujian aktual agar dokumentasi sesuai dengan kondisi 
 
 **Pemeriksaan:** Aturan ACL `OUTSIDE-TO-INSIDE` diperiksa menggunakan `show access-list`.
 
-**Hasil:** Aturan deny ICMP untuk trafik dari `192.168.20.10` menuju `192.168.10.10` menunjukkan `hitcnt=4`.
+**Hasil:** Aturan deny ICMP untuk trafik dari `192.168.20.10` menuju `192.168.10.10` menunjukkan hit counter yang bertambah setelah pengujian.
 
 Hal tersebut sesuai dengan target pengujian untuk memblokir ICMP dari Finance ke IT.
 
@@ -503,22 +506,19 @@ Project ini mendemonstrasikan keterampilan dasar jaringan dan keamanan berikut:
 
 ## Struktur File Project
 
-Struktur repository yang disarankan:
-
 ```text
 Cisco_ASA_Enterprise_Network/
 ├── README.md
 ├── Cisco_ASA_Enterprise_Network.pkt
-└── screenshots/
-    ├── topology.png
-    ├── asa-config.png
-    ├── acl-verification.png
-    ├── finance-to-server.png
-    ├── finance-to-it.png
-    └── routing-verification.png
+├── acl-verification.png
+├── asa-interface-verification.png
+├── connectivity-testing-PC FINANCE.png
+├── connectivity-testing-PC IT.png
+├── routing-verification.png
+└── topology.png
 ```
 
-Pastikan file `.pkt` dan screenshot benar-benar tersedia sebelum repository dipublikasikan. Nama file dapat disesuaikan dengan file yang digunakan.
+File `.pkt` berisi simulasi jaringan Cisco Packet Tracer. File PNG berisi dokumentasi topologi, konfigurasi interface, routing, ACL, dan hasil pengujian konektivitas.
 
 ## Status Project
 
@@ -540,6 +540,6 @@ Pengembangan selanjutnya dapat mencakup pengujian trafik HTTP/HTTPS, penerapan k
 
 Project ini menunjukkan penerapan dasar firewall dan pengendalian trafik menggunakan Cisco ASA 5505 di Cisco Packet Tracer.
 
-Hasil pengujian menunjukkan bahwa PC Finance dapat melakukan ping ke router ISP dan server, sedangkan ICMP dari PC Finance menuju PC IT ditolak oleh aturan ACL yang sesuai.
+Hasil pengujian menunjukkan bahwa PC IT dan PC Finance dapat melakukan ping ke server, PC Finance dapat menjangkau router ISP, dan ICMP dari PC Finance menuju PC IT ditolak oleh aturan ACL yang sesuai.
 
 Simulasi ini menjadi dasar untuk mempelajari firewall, segmentasi jaringan, routing, ACL, dan troubleshooting dalam lingkungan jaringan yang lebih kompleks.
