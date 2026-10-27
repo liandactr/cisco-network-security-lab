@@ -447,43 +447,25 @@ Perintah tersebut dapat digunakan untuk memeriksa VLAN, status port, MAC address
 
 ## Dokumentasi Pengujian
 
-### 1. Verifikasi Topologi Jaringan
-
-![Topologi Jaringan Cisco ASA](topology.png)
-
-Dokumentasi topologi menunjukkan hubungan antara jaringan IT, Finance, Cisco ASA 5505, router ISP, dan server. Topologi ini digunakan sebagai dasar konfigurasi firewall dan pengujian komunikasi antarjaringan.
-
-### 2. Verifikasi Interface Cisco ASA
+### 1. Verifikasi Interface Cisco ASA
 
 ![Verifikasi Interface ASA](asa-interface-verification.png)
 
-Verifikasi dilakukan untuk memeriksa alamat IP dan status interface ASA, termasuk interface `inside` dan `outside`. Pemeriksaan ini membantu memastikan interface telah dikonfigurasi sesuai skema pengalamatan IP.
-
-### 3. Verifikasi Routing
+### 2. Verifikasi Routing
 
 ![Verifikasi Routing](routing-verification.png)
 
-Pemeriksaan routing digunakan untuk memastikan ASA memiliki jalur menuju jaringan server melalui router ISP. Routing pada router ISP juga mendukung komunikasi menuju jaringan yang berada di belakang ASA.
-
-### 4. Verifikasi Access Control List (ACL)
+### 3. Verifikasi Access Control List (ACL)
 
 ![Verifikasi ACL](acl-verification.png)
 
-Verifikasi ACL dilakukan menggunakan perintah `show access-list` untuk memeriksa aturan akses dan hit counter. Hit counter membantu menunjukkan apakah trafik pengujian cocok dengan aturan ACL yang diterapkan.
-
-### 5. Pengujian Konektivitas PC Finance
+### 4. Pengujian Konektivitas PC Finance
 
 ![Pengujian Konektivitas PC Finance](connectivity-testing-pc-finance.png)
 
-Pengujian dilakukan dari PC Finance untuk memverifikasi konektivitas menuju router ISP dan server. Hasil pengujian yang dicatat menunjukkan ping ke `192.168.20.2` dan `192.168.30.10` berhasil dengan empat paket diterima dan `0% packet loss`.
-
-Pengujian ping dari PC Finance menuju PC IT (`192.168.10.10`) juga dilakukan untuk memverifikasi kebijakan pemblokiran ICMP. Hasil yang diharapkan adalah trafik tersebut diblokir sesuai aturan ACL.
-
-### 6. Pengujian Konektivitas PC IT
+### 5. Pengujian Konektivitas PC IT
 
 ![Pengujian Konektivitas PC IT](connectivity-testing-pc-it.png)
-
-Pengujian dilakukan dari PC IT untuk memverifikasi konektivitas menuju server pada jaringan `192.168.30.0/24`. Hasil pengujian menunjukkan PC IT berhasil menjangkau server melalui Cisco ASA dan router ISP.
 
 ## Troubleshooting
 
