@@ -473,7 +473,7 @@ Verifikasi ACL dilakukan menggunakan perintah `show access-list` untuk memeriksa
 
 ### 5. Pengujian Konektivitas PC Finance
 
-![Pengujian Konektivitas PC Finance](connectivity-testing-PC FINANCE.png)
+![Pengujian Konektivitas PC Finance](connectivity-testing-pc-finance.png)
 
 Pengujian dilakukan dari PC Finance untuk memverifikasi konektivitas menuju router ISP dan server. Hasil pengujian yang dicatat menunjukkan ping ke `192.168.20.2` dan `192.168.30.10` berhasil dengan empat paket diterima dan `0% packet loss`.
 
@@ -481,7 +481,7 @@ Pengujian ping dari PC Finance menuju PC IT (`192.168.10.10`) juga dilakukan unt
 
 ### 6. Pengujian Konektivitas PC IT
 
-![Pengujian Konektivitas PC IT](connectivity-testing-PC IT.png)
+![Pengujian Konektivitas PC IT](connectivity-testing-pc-it.png)
 
 Pengujian dilakukan dari PC IT untuk memverifikasi konektivitas menuju server pada jaringan `192.168.30.0/24`. Hasil pengujian menunjukkan PC IT berhasil menjangkau server melalui Cisco ASA dan router ISP.
 
@@ -541,8 +541,8 @@ Cisco_ASA_Enterprise_Network/
 ├── Cisco_ASA_Enterprise_Network.pkt
 ├── acl-verification.png
 ├── asa-interface-verification.png
-├── connectivity-testing-PC FINANCE.png
-├── connectivity-testing-PC IT.png
+├── connectivity-testing-pc-finance.png
+├── connectivity-testing-pc-it.png
 ├── routing-verification.png
 └── topology.png
 ```
